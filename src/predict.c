@@ -10,7 +10,6 @@
 
 extern int deitype(char *);  /* in lfstr.c */
 static lfit lf;
-int lf_error;
 
 int predict(char *filename, int nPredictions, double *descriptors, double *predictions)
 {
