@@ -1,0 +1,87 @@
+                                 LOCFIT
+                    Local Regression and Likelihood
+
+                            Catherine Loader
+                    catherine@research.bell-labs.com
+                         or cathl@optonline.net
+              http://cm.bell-labs.com/stat/project/locfit/
+
+                 Also incorporating SCB code, joint with
+                               Jiayang Sun
+                        jiayang@sun.stat.cwru.edu
+                  http://sun.cwru.edu/~jiayang/sci3.html
+
+                             August 1, 2001
+
+
+Locfit is a program for fitting regression, likelihood and density
+estimation models using a local polynomial approach. Both univariate
+and multivarite predictor spaces are supported, along with a wide
+range of likelihoods: local least squares; local logistic regression;
+hazard rate models; censored regression models; local density estimation
+and others. The program can be installed as a library for R, S or S-Plus.
+It can also be installed as a stand-alone application ("C-Locfit").
+
+
+INSTALLATION:
+
+To compile and install from a source distribution, please consult the
+Locfit web page, http://cm.bell-labs.com/stat/project/locfit/.
+
+If you have a binary distribution, Locfit is ready to use as distributed.
+For convenience, S-Plus users may like to
+  (1) move the archive to $SHOME/library/
+  (2) add the line
+        locfit          Local Regression, Likelihood and Density Estimation.
+      to the $SHOME/library/README file.
+  (3) In an S-Plus session, attach the library with library("locfit",first=T).
+
+
+DOCUMENTATION:
+
+Numerous examples can be found in my book,
+"Local Regression and Likelihood", Springer Series in Statistics and
+Computing, 1999.
+
+Due to the large number of incompatable, inconvenient and changing formats
+for help pages in different versions of S and S-Plus, I cannot maintain
+S-Plus formatted help pages. Instead, html manual pages for most functions
+are available on the locfit web pages.
+
+
+ABOUT ALGORITHMS:
+The Locfit implementation has been designed largely from the point
+of view of generality: to provide a set of functions that can be
+used for as wide a range of local fitting problems as possible.
+It is not intended to be the fastest or most efficient implementation
+possible. In addition to generality, the code in many places makes
+extensive trade-offs made between speed and numerical accuracy (some
+of which can be controlled through optional arguments). Many of Locfit's
+options will only be used in a small fraction of cases; for other cases,
+they add to the cost of overhead (an obvious example is multi-dimensional
+fitting: when used in 1-d, many loops reduce to for(i=0;i<1;i++)).
+Additionally, the user interfaces (i.e. the R and S-Plus code) add
+significantly to the computational overhead. For these reasons, the
+Locfit code, as distributed, should not, and can not, be used to
+derive meaningful benchmarks, either for the speed or accuracy of algorithms.
+Anyone wishing to use Locfit in any kind of comparative benchmark
+study must contact and obtain permission from the Author.
+
+
+COPYRIGHT:
+
+Copyright (c) 1996-2001 Lucent Technologies, Bell Laboratories.
+SCB code is
+Copyright (c) 1996-2001 Jiayang Sun.
+
+Permission to use, copy, modify, and distribute this software for any
+purpose (with the exceptions noted in `About Algorithms' above)
+without fee is hereby granted, and provided that this entire notice is
+included in all copies of any software which is or includes a copy or
+modification of this software and in all copies of the supporting
+documentation for such software.
+
+THIS SOFTWARE IS BEING PROVIDED "AS IS", WITHOUT ANY EXPRESS OR IMPLIED
+WARRANTY.  IN PARTICULAR, NEITHER THE AUTHOR NOR LUCENT TECHNOLOGIES
+MAKE ANY REPRESENTATION OR WARRANTY OF ANY KIND CONCERNING THE
+MERCHANTABILITY OF THIS SOFTWARE OR ITS FITNESS FOR ANY PARTICULAR PURPOSE.

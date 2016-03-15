@@ -1,0 +1,4 @@
+include DESCRIPTION.txt
+recursive-include gbml/data *.data *.json
+recursive-include gbml/examples test_*
+recursive-include src *.h README

@@ -1,0 +1,6 @@
+__author__ = 'Randy Notestine'
+__copyright__ = 'Copyright 2016, The Materials Project'
+__version__ = '1.00'
+__maintainer__ = 'Randy Notestine'
+__email__ = 'RNotestine@ucsd.edu'
+__date__ = 'March 14, 2016'
