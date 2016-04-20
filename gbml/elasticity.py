@@ -121,7 +121,22 @@ def holder_mean(values, power, weights=None, weights_norm=None):
     return pow(alpha * sum(weights * np.power(values, power)), 1/power)
 
 
-def predict_k_g_list(material_id_list):
+def _get_mp_query(api_key, query_engine):
+    """
+    Returns object that can query the MP DB. This is either a local query_engine
+    or a remote MPRester object. We can do this because both MPRester and QueryEngine
+    expose the same query interface
+    """
+    if query_engine:
+        return query_engine
+    elif api_key:
+        return MPRester(api_key)
+    else:
+        raise Exception("missing API KEY or query engine")
+
+
+
+def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
     """
     Predict bulk (K) and shear (G) moduli for a list of materials.
     :param material_id_list: list of material-ID strings
@@ -145,7 +160,9 @@ def predict_k_g_list(material_id_list):
     caveats_list = []
     aiab_problem_list = []
 
-    with MPRester(api_key=API_KEY) as mpr:
+    # TODO: figure out if closing the query engine (using 'with' ctx mgr) is an issue
+    # If it is a problem then try manually doing a session.close() for MPRester, but ignore for qe
+    with _get_mp_query(api_key, query_engine) as mpr:
         for entry in mpr.query(criteria={"task_id": {"$in": material_id_list}}, properties=
             ["material_id", "pretty_formula", "nsites", "volume", "energy_per_atom", "is_hubbard"]):
 
@@ -239,7 +256,7 @@ def predict_k_g_list(material_id_list):
         return (matid_list, k_list, g_list, caveats_list)
 
 
-def predict_k_g(material_id):
+def predict_k_g(material_id, api_key=API_KEY, query_engine=None):
     """
     Predict bulk (K) and shear (G) moduli for one material.
     :param material_id: material-ID string
@@ -250,7 +267,7 @@ def predict_k_g(material_id):
     if len(material_id) == 0 or not isinstance(material_id, str):
         return (None, None, None)  # material_id not properly specified
 
-    (material_id_list, k_list, g_list, caveats_list) = predict_k_g_list([material_id])
+    (material_id_list, k_list, g_list, caveats_list) = predict_k_g_list([material_id], local)
 
     if material_id_list is None:
         return (None, None, None)  # material_id not found in MP db
