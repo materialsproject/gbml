@@ -124,7 +124,7 @@ def holder_mean(values, power, weights=None, weights_norm=None):
 def _get_mp_query(api_key, query_engine):
     """
     Returns object that can query the MP DB. This is either a local query_engine
-    or a remote MPRester object. We can do this because both MPRester and QueryEngine
+    or an MPRester object. We can do this because both MPRester and QueryEngine
     expose the same query interface
     """
     if query_engine:
@@ -140,6 +140,9 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
     """
     Predict bulk (K) and shear (G) moduli for a list of materials.
     :param material_id_list: list of material-ID strings
+    :param api_key: The API key used by pymatgen.matproj.rest.MPRester to connect to Materials Project
+    :param query_engine: (Optional) QueryEngine object used to query materials instead of MPRester
+ 
     :return: (matid_list, predicted_k_list, predicted_g_list, caveats_list)
     Note that len(matid_list) may be less than len(material_id_list),
     if any requested material-IDs are not found.
@@ -260,6 +263,9 @@ def predict_k_g(material_id, api_key=API_KEY, query_engine=None):
     """
     Predict bulk (K) and shear (G) moduli for one material.
     :param material_id: material-ID string
+    :param api_key: The API key used by pymatgen.matproj.rest.MPRester to connect to Materials Project 
+    :param query_engine: (Optional) QueryEngine object used to query materials instead of MPRester
+
     :return: (predicted_k, predicted_g, caveats)
     Note that None may be returned for predicted_k and predicted_g when caveats is not None.
     """
@@ -267,7 +273,7 @@ def predict_k_g(material_id, api_key=API_KEY, query_engine=None):
     if len(material_id) == 0 or not isinstance(material_id, str):
         return (None, None, None)  # material_id not properly specified
 
-    (material_id_list, k_list, g_list, caveats_list) = predict_k_g_list([material_id], local)
+    (material_id_list, k_list, g_list, caveats_list) = predict_k_g_list([material_id], api_key, query_engine)
 
     if material_id_list is None:
         return (None, None, None)  # material_id not found in MP db
