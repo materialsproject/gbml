@@ -1,2 +1,5 @@
 build/
 gbml.egg-info/
+*.pyc
+.cache
+*.egg
