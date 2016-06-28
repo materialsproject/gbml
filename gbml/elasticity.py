@@ -165,60 +165,64 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
 
     # TODO: figure out if closing the query engine (using 'with' ctx mgr) is an issue
     # If it is a problem then try manually doing a session.close() for MPRester, but ignore for qe
-    with _get_mp_query(api_key, query_engine) as mpr:
-        for entry in mpr.query(criteria={"task_id": {"$in": material_id_list}}, properties=
-            ["material_id", "pretty_formula", "nsites", "volume", "energy_per_atom", "is_hubbard"]):
 
-            caveats_str = ''
-            aiab_flag = False
-            f_block_flag = False
-            weight_list = []
-            energy_list = []
-            row_list = []
-            x_list = []
+    mpr = _get_mp_query(api_key, query_engine) 
+    for entry in mpr.query(criteria={"task_id": {"$in": material_id_list}}, properties=
+        ["material_id", "pretty_formula", "nsites", "volume", "energy_per_atom", "is_hubbard"]):
 
-            # Construct per-element lists for this material
-            composition = Composition(str(entry["pretty_formula"]))
-            for element_key, amount in composition.get_el_amt_dict().iteritems():
-                element = Element(element_key)
-                weight_list.append(composition.get_atomic_fraction(element))
-                aiab_energy = get_element_aiab_energy(element_key)  # aiab = atom-in-a-box
-                if aiab_energy is None:
-                    aiab_flag = True
-                    break
-                energy_list.append(aiab_energy)
-                if element.block == 'f':
-                  f_block_flag = True
-                row_list.append(element.row)
-                x_list.append(element.X)
+        caveats_str = ''
+        aiab_flag = False
+        f_block_flag = False
+        weight_list = []
+        energy_list = []
+        row_list = []
+        x_list = []
 
-            # On error, add material to aiab_problem_list and continue with next material
-            if aiab_flag:
-                aiab_problem_list.append(str(entry["material_id"]))
-                continue
+        # Construct per-element lists for this material
+        composition = Composition(str(entry["pretty_formula"]))
+        for element_key, amount in composition.get_el_amt_dict().iteritems():
+            element = Element(element_key)
+            weight_list.append(composition.get_atomic_fraction(element))
+            aiab_energy = get_element_aiab_energy(element_key)  # aiab = atom-in-a-box
+            if aiab_energy is None:
+                aiab_flag = True
+                break
+            energy_list.append(aiab_energy)
+            if element.block == 'f':
+              f_block_flag = True
+            row_list.append(element.row)
+            x_list.append(element.X)
 
-            # Check caveats
-            if bool(entry["is_hubbard"]):
-                if len(caveats_str) > 0: caveats_str += " "
-                caveats_str += CAVEAT_HUBBARD
-            if f_block_flag:
-                if len(caveats_str) > 0: caveats_str += " "
-                caveats_str += CAVEAT_F_BLOCK
+        # On error, add material to aiab_problem_list and continue with next material
+        if aiab_flag:
+            aiab_problem_list.append(str(entry["material_id"]))
+            continue
 
-            # Calculate intermediate weighted averages (WA) for this material
-            ewa = np.average(energy_list, weights=weight_list)      # atom-in-a-box energy WA
+        # Check caveats
+        if bool(entry["is_hubbard"]):
+            if len(caveats_str) > 0: caveats_str += " "
+            caveats_str += CAVEAT_HUBBARD
+        if f_block_flag:
+            if len(caveats_str) > 0: caveats_str += " "
+            caveats_str += CAVEAT_F_BLOCK
 
-            print str(entry["material_id"]) 
+        # Calculate intermediate weighted averages (WA) for this material
+        ewa = np.average(energy_list, weights=weight_list)      # atom-in-a-box energy WA
 
-            # Append descriptors for this material to descriptor lists
-            lvpa_list.append(math.log10(float(entry["volume"]) / float(entry["nsites"])))
-            cepa_list.append(float(entry["energy_per_atom"]) - ewa)
-            rowH1A_list.append(holder_mean(row_list, 1.0, weights=weight_list))
-            rowHn3A_list.append(holder_mean(row_list, -3.0, weights=weight_list))
-            xH4A_list.append(holder_mean(x_list, 4.0, weights=weight_list))
-            xHn4A_list.append(holder_mean(x_list, -4.0, weights=weight_list))
-            matid_list.append(str(entry["material_id"]))
-            caveats_list.append(caveats_str)
+        print str(entry["material_id"]) 
+
+        # Append descriptors for this material to descriptor lists
+        lvpa_list.append(math.log10(float(entry["volume"]) / float(entry["nsites"])))
+        cepa_list.append(float(entry["energy_per_atom"]) - ewa)
+        rowH1A_list.append(holder_mean(row_list, 1.0, weights=weight_list))
+        rowHn3A_list.append(holder_mean(row_list, -3.0, weights=weight_list))
+        xH4A_list.append(holder_mean(x_list, 4.0, weights=weight_list))
+        xHn4A_list.append(holder_mean(x_list, -4.0, weights=weight_list))
+        matid_list.append(str(entry["material_id"]))
+        caveats_list.append(caveats_str)
+
+    if isinstance(mpr, MPRester):
+        mpr.session.close()
 
     # Check that at least one valid material was provided
     num_predictions = len(matid_list)
