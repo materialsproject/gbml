@@ -12,6 +12,7 @@ import math
 import numpy as np
 from numpy import array
 import os
+import six
 import sys
 #from warnings import warn
 
@@ -274,7 +275,7 @@ def predict_k_g(material_id, api_key=API_KEY, query_engine=None):
     Note that None may be returned for predicted_k and predicted_g when caveats is not None.
     """
 
-    if len(material_id) == 0 or not isinstance(material_id, str):
+    if len(material_id) == 0 or not isinstance(material_id, six.string_types):
         return (None, None, None)  # material_id not properly specified
 
     (material_id_list, k_list, g_list, caveats_list) = predict_k_g_list([material_id], api_key, query_engine)
