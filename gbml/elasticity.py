@@ -5,7 +5,7 @@ Queries MP db for specified material(s), computes descriptors, and calls gbml.co
 
 from pymatgen.core.periodic_table import Element
 from pymatgen.core.composition import Composition
-from pymatgen.matproj.rest import MPRester
+from pymatgen.ext.matproj import MPRester
 import gbml.core # GBM-Locfit core module
 import json
 import math
@@ -143,7 +143,7 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
     :param material_id_list: list of material-ID strings
     :param api_key: The API key used by pymatgen.matproj.rest.MPRester to connect to Materials Project
     :param query_engine: (Optional) QueryEngine object used to query materials instead of MPRester
- 
+
     :return: (matid_list, predicted_k_list, predicted_g_list, caveats_list)
     Note that len(matid_list) may be less than len(material_id_list),
     if any requested material-IDs are not found.
@@ -167,7 +167,7 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
     # TODO: figure out if closing the query engine (using 'with' ctx mgr) is an issue
     # If it is a problem then try manually doing a session.close() for MPRester, but ignore for qe
 
-    mpr = _get_mp_query(api_key, query_engine) 
+    mpr = _get_mp_query(api_key, query_engine)
     for entry in mpr.query(criteria={"task_id": {"$in": material_id_list}}, properties=
         ["material_id", "pretty_formula", "nsites", "volume", "energy_per_atom", "is_hubbard"]):
 
@@ -210,7 +210,7 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
         # Calculate intermediate weighted averages (WA) for this material
         ewa = np.average(energy_list, weights=weight_list)      # atom-in-a-box energy WA
 
-        print str(entry["material_id"]) 
+        print str(entry["material_id"])
 
         # Append descriptors for this material to descriptor lists
         lvpa_list.append(math.log10(float(entry["volume"]) / float(entry["nsites"])))
@@ -268,7 +268,7 @@ def predict_k_g(material_id, api_key=API_KEY, query_engine=None):
     """
     Predict bulk (K) and shear (G) moduli for one material.
     :param material_id: material-ID string
-    :param api_key: The API key used by pymatgen.matproj.rest.MPRester to connect to Materials Project 
+    :param api_key: The API key used by pymatgen.matproj.rest.MPRester to connect to Materials Project
     :param query_engine: (Optional) QueryEngine object used to query materials instead of MPRester
 
     :return: (predicted_k, predicted_g, caveats)
