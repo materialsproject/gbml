@@ -5,6 +5,7 @@
 #include <Python.h>
 #include <numpy/arrayobject.h>
 #include "predict.h"
+#include <stdio.h>
 
 // package:     gbml
 // module:      core
@@ -17,21 +18,31 @@ static char predict_docstring[] =
     "This module makes GBM-Locfit predictions.";
 
 // gbml_predict function declaration
-static PyObject *gbml_predict(PyObject *self, PyObject *args);
+static PyObject *
+gbml_predict(PyObject *self, PyObject *args);
 
 // method definition
-static PyMethodDef predictModule_methods[] = { 
-    {"predict", gbml_predict, METH_VARARGS, predict_docstring},
+static PyMethodDef *predictModule_methods[] = {
+    {"predict", (PyCFunction)gbml_predict, METH_VARARGS, predict_docstring},
     {NULL, NULL, 0, NULL} };
 
-// init function definition
-PyMODINIT_FUNC initcore(void)
-{
-  Py_InitModule3("core", predictModule_methods, core_docstring);
+static struct PyModuleDef *coredef = {
+    PyModuleDef_HEAD_INIT,
+    "core",
+    core_docstring,
+    -1,
+    predictModule_methods,
+};
 
+// init function definition
+PyMODINIT_FUNC
+PyInit_core(void)
+{
   // Required for numpy
+  printf("whatup dummy");
+  return PyModule_Create(&coredef);
   import_array();
-}
+};
 
 // gbml_predict function definition
 static PyObject *gbml_predict(PyObject *self, PyObject *args)

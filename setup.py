@@ -46,6 +46,6 @@ setup(
     install_requires=['numpy', 'pymatgen'],
     include_package_data=True,
     ext_modules=[core],
-    platforms=['linux'] )
+    platforms=['linux'])
 
 #   package_data={'gbml': ['gbml/data/*.data', 'gbml/data/*.json', 'src/*.h', 'src/README']},
