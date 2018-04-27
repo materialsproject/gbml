@@ -69,14 +69,14 @@ def holder_mean(values, power, weights=None, weights_norm=None):
   :return: holder_mean
   """
 
-  values = array(values, dtype=float)
+  values = np.array(values, dtype=float)
   power = float(power)
 
   # Make sure weights match length and are normalized
   if weights is None:
     alpha = 1 / len(values)
   else:
-    weights = array(weights, dtype=float)
+    weights = np.array(weights, dtype=float)
     if len(values) != len(weights):
       #warn('Holder.mean returned zero when passed length mis-matched values and weights', UserWarning)
       sys.stderr.write('  Warning: Holder.mean returned zero when passed length mis-matched values and weights\n')

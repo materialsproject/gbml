@@ -3,7 +3,7 @@
 # Test script for gbml elasticity (bulk and shear moduli) predictions
 
 from gbml import elasticity
-import pytest
+import unittest 
 
 from configparser import SafeConfigParser
 
@@ -104,7 +104,7 @@ def test_predict_k_g_list():
     (matid_list, k_list, g_list, caveat_list) = elasticity.predict_k_g_list(mpID_list, query_engine=MockQE())
     assert (matid_list, k_list, g_list, caveat_list) == (expected_matid_list, expected_k_list, expected_g_list, expected_caveat_list)
 
-@pytest.mark.skipif(api_key == None, reason="API key not defined")
+@unittest.skipIf(api_key == None, reason="API key not defined")
 def test_predict_k_g_remote():
 
     parser = ConfigParser.SafeConfigParser()
@@ -118,7 +118,7 @@ def test_predict_k_g_remote():
     (k_value, g_value, caveat_str) = elasticity.predict_k_g(mpID, api_key)
     assert (k_value, g_value, caveat_str) == (expected_k_value, expected_g_value, expected_caveat_str)
 
-@pytest.mark.skipif(api_key == None, reason="API key not defined")
+@unittest.skipIf(api_key == None, reason="API key not defined")
 def test_predict_k_g_list_remote():
 
     (expected_matid_list, expected_k_list, expected_g_list, expected_caveat_list) = (
@@ -141,4 +141,4 @@ def test_predict_k_g_list_remote():
 
 
 if __name__ == '__main__':
-    pytest.main()
+    unittest.main()
