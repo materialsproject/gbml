@@ -3,14 +3,17 @@
 # Test script for gbml elasticity (bulk and shear moduli) predictions
 
 from gbml import elasticity
-import unittest 
+import unittest
 
-from configparser import SafeConfigParser
+try:
+    from configparser import SafeConfigParser
+except:
+    from ConfigParser import SafeConfigParser
 
 import os
 
 try:
-    parser = ConfigParser.SafeConfigParser()
+    parser = SafeConfigParser()
     cur_dir = os.path.dirname(__file__)
     parser.read('{}/test.ini'.format(cur_dir))
     api_key = parser.get('mprester', 'api_key')
@@ -107,7 +110,7 @@ def test_predict_k_g_list():
 @unittest.skipIf(api_key == None, reason="API key not defined")
 def test_predict_k_g_remote():
 
-    parser = ConfigParser.SafeConfigParser()
+    parser = SafeConfigParser()
     cur_dir = os.path.dirname(__file__)
     parser.read('{}/test.ini'.format(cur_dir))
     api_key = parser.get('mprester', 'api_key')
