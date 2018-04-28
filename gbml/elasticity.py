@@ -23,7 +23,7 @@ __maintainer__ = 'Randy Notestine'
 __email__ = 'RNotestine@ucsd.edu'
 __date__ = 'March 14, 2016'
 
-API_KEY = None
+API_KEY = MPRester().api_key
 CAVEAT_AIAB = 'Unable to estimate cohesive energy for material.'
 CAVEAT_F_BLOCK = 'Predictions are likely less reliable for materials containing F-block elements.'
 CAVEAT_HUBBARD = 'Predictions may be less reliable for materials with non-GGA runs.'
@@ -122,7 +122,7 @@ def holder_mean(values, power, weights=None, weights_norm=None):
     return pow(alpha * sum(weights * np.power(values, power)), 1/power)
 
 
-def _get_mp_query(api_key, query_engine):
+def _get_mp_query(api_key=None, query_engine=None):
     """
     Returns object that can query the MP DB. This is either a local query_engine
     or an MPRester object. We can do this because both MPRester and QueryEngine
