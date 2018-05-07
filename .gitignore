@@ -3,3 +3,6 @@ gbml.egg-info/
 *.pyc
 .cache
 *.egg
+.idea/
+dist/*
+core.so
