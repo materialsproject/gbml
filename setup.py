@@ -36,16 +36,21 @@ core=Extension(
 
 setup(
     name='gbml',
-    version='1.0',
+    version='1.0.1',
     description='GBM-Locfit: A GBM framework using Locfit',
     long_description=long_description,
     author='Randy Notestine',
     author_email='RNotestine@UCSD.edu',
     license='GPL2',
     packages=find_packages(),
+    url='https://github.com/materialsproject/gbml/',
     install_requires=['numpy', 'pymatgen'],
     include_package_data=True,
     ext_modules=[core],
-    platforms=['linux'])
+    classifiers=[
+        'Programming Language :: Python :: 3',
+    ],
+    python_requires='>=3',
+)
 
 #   package_data={'gbml': ['gbml/data/*.data', 'gbml/data/*.json', 'src/*.h', 'src/README']},
