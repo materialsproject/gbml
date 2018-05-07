@@ -16,23 +16,6 @@ static char core_docstring[] =
 static char predict_docstring[] =
     "This module makes GBM-Locfit predictions.";
 
-// gbml_predict function declaration
-static PyObject *gbml_predict(PyObject *self, PyObject *args);
-
-// method definition
-static PyMethodDef predictModule_methods[] = { 
-    {"predict", gbml_predict, METH_VARARGS, predict_docstring},
-    {NULL, NULL, 0, NULL} };
-
-// init function definition
-PyMODINIT_FUNC initcore(void)
-{
-  Py_InitModule3("core", predictModule_methods, core_docstring);
-
-  // Required for numpy
-  import_array();
-}
-
 // gbml_predict function definition
 static PyObject *gbml_predict(PyObject *self, PyObject *args)
 {
@@ -56,4 +39,29 @@ static PyObject *gbml_predict(PyObject *self, PyObject *args)
     return NULL;
   else
     Py_RETURN_NONE;
-}
+};
+
+// method definition
+static PyMethodDef core_methods[] = {
+    {"predict", gbml_predict, METH_VARARGS, predict_docstring},
+    {NULL, NULL, 0, NULL} 
+};
+
+static struct PyModuleDef coredef = {
+    PyModuleDef_HEAD_INIT,
+    "core",
+    core_docstring,
+    -1,
+    core_methods,
+};
+
+// init function definition
+PyMODINIT_FUNC
+PyInit_core(void)
+{
+  /*m = PyModule_Create(coredef);*/
+  import_array();
+  return PyModule_Create(&coredef);
+};
+
+

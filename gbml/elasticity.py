@@ -3,6 +3,8 @@ Predict bulk (K) and shear (G) moduli using gbml (GBM-Locfit).
 Queries MP db for specified material(s), computes descriptors, and calls gbml.core.predict().
 """
 
+from __future__ import print_function
+
 from pymatgen.core.periodic_table import Element
 from pymatgen.core.composition import Composition
 from pymatgen.ext.matproj import MPRester
@@ -10,11 +12,9 @@ import gbml.core # GBM-Locfit core module
 import json
 import math
 import numpy as np
-from numpy import array
 import os
 import six
 import sys
-#from warnings import warn
 
 __author__ = 'Randy Notestine'
 __copyright__ = 'Copyright 2016, The Materials Project'
@@ -23,7 +23,7 @@ __maintainer__ = 'Randy Notestine'
 __email__ = 'RNotestine@ucsd.edu'
 __date__ = 'March 14, 2016'
 
-API_KEY = None
+API_KEY = MPRester().api_key
 CAVEAT_AIAB = 'Unable to estimate cohesive energy for material.'
 CAVEAT_F_BLOCK = 'Predictions are likely less reliable for materials containing F-block elements.'
 CAVEAT_HUBBARD = 'Predictions may be less reliable for materials with non-GGA runs.'
@@ -69,14 +69,14 @@ def holder_mean(values, power, weights=None, weights_norm=None):
   :return: holder_mean
   """
 
-  values = array(values, dtype=float)
+  values = np.array(values, dtype=float)
   power = float(power)
 
   # Make sure weights match length and are normalized
   if weights is None:
     alpha = 1 / len(values)
   else:
-    weights = array(weights, dtype=float)
+    weights = np.array(weights, dtype=float)
     if len(values) != len(weights):
       #warn('Holder.mean returned zero when passed length mis-matched values and weights', UserWarning)
       sys.stderr.write('  Warning: Holder.mean returned zero when passed length mis-matched values and weights\n')
@@ -122,7 +122,7 @@ def holder_mean(values, power, weights=None, weights_norm=None):
     return pow(alpha * sum(weights * np.power(values, power)), 1/power)
 
 
-def _get_mp_query(api_key, query_engine):
+def _get_mp_query(api_key=None, query_engine=None):
     """
     Returns object that can query the MP DB. This is either a local query_engine
     or an MPRester object. We can do this because both MPRester and QueryEngine
@@ -181,7 +181,7 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
 
         # Construct per-element lists for this material
         composition = Composition(str(entry["pretty_formula"]))
-        for element_key, amount in composition.get_el_amt_dict().iteritems():
+        for element_key, amount in composition.get_el_amt_dict().items():
             element = Element(element_key)
             weight_list.append(composition.get_atomic_fraction(element))
             aiab_energy = get_element_aiab_energy(element_key)  # aiab = atom-in-a-box
@@ -210,7 +210,7 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
         # Calculate intermediate weighted averages (WA) for this material
         ewa = np.average(energy_list, weights=weight_list)      # atom-in-a-box energy WA
 
-        print str(entry["material_id"])
+        print(str(entry["material_id"]))
 
         # Append descriptors for this material to descriptor lists
         lvpa_list.append(math.log10(float(entry["volume"]) / float(entry["nsites"])))
