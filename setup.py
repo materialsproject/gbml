@@ -50,7 +50,7 @@ setup(
     classifiers=[
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 2.7',
-    ],
+    ]
 )
 
 #   package_data={'gbml': ['gbml/data/*.data', 'gbml/data/*.json', 'src/*.h', 'src/README']},
