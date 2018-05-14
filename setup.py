@@ -36,7 +36,7 @@ core=Extension(
 
 setup(
     name='gbml',
-    version='1.0.3',
+    version='1.0.5',
     description='GBM-Locfit: A GBM framework using Locfit',
     long_description=long_description,
     author='Randy Notestine',
@@ -49,8 +49,8 @@ setup(
     ext_modules=[core],
     classifiers=[
         'Programming Language :: Python :: 3',
-        'Programming Language :: Python :: 2.7',
-    ]
+    ],
+    python_requires='>=3',
 )
 
 #   package_data={'gbml': ['gbml/data/*.data', 'gbml/data/*.json', 'src/*.h', 'src/README']},
