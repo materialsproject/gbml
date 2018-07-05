@@ -4,7 +4,7 @@
 
 from gbml import elasticity
 
-API_KEY = "TBQ3TonU8XZyDTEd"
+API_KEY = "<YOUR_API_KEY>"
 
 mpID = "mp-10003"
 (k_value, g_value, caveat_str) = elasticity.predict_k_g(mpID, api_key=API_KEY)
