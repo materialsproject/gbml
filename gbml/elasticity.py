@@ -3,6 +3,8 @@ Predict bulk (K) and shear (G) moduli using gbml (GBM-Locfit).
 Queries MP db for specified material(s), computes descriptors, and calls gbml.core.predict().
 """
 
+from __future__ import print_function
+
 from pymatgen.core.periodic_table import Element
 from pymatgen.core.composition import Composition
 from pymatgen.ext.matproj import MPRester
