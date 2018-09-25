@@ -136,14 +136,13 @@ def _get_mp_query(api_key=None, query_engine=None):
         raise Exception("missing API KEY or query engine")
 
 
-
 def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
     """
     Predict bulk (K) and shear (G) moduli for a list of materials.
     :param material_id_list: list of material-ID strings
     :param api_key: The API key used by pymatgen.matproj.rest.MPRester to connect to Materials Project
     :param query_engine: (Optional) QueryEngine object used to query materials instead of MPRester
-
+ 
     :return: (matid_list, predicted_k_list, predicted_g_list, caveats_list)
     Note that len(matid_list) may be less than len(material_id_list),
     if any requested material-IDs are not found.
@@ -151,6 +150,23 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
 
     if len(material_id_list) == 0 or not isinstance(material_id_list, list):
         return (None, None, None, None)  # material_id_list not properly specified
+
+    mpr = _get_mp_query(api_key, query_engine)
+
+    entries = mpr.query(criteria={"task_id": {"$in": material_id_list}}, properties=
+        ["material_id", "pretty_formula", "nsites", "volume", "energy_per_atom", "is_hubbard"])
+
+    if isinstance(mpr, MPRester):
+        mpr.session.close()
+
+    return predict_k_g_list_of_entries(entries)
+
+
+def predict_k_g_list_of_entries(entries):
+    """
+    Predict bulk (K) and shear (G) moduli from a list of entries in the same
+    format as retrieved from the Materials Project API.
+    """
 
     lvpa_list = []
     cepa_list = []
@@ -167,9 +183,7 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
     # TODO: figure out if closing the query engine (using 'with' ctx mgr) is an issue
     # If it is a problem then try manually doing a session.close() for MPRester, but ignore for qe
 
-    mpr = _get_mp_query(api_key, query_engine)
-    for entry in mpr.query(criteria={"task_id": {"$in": material_id_list}}, properties=
-        ["material_id", "pretty_formula", "nsites", "volume", "energy_per_atom", "is_hubbard"]):
+    for entry in entries:
 
         caveats_str = ''
         aiab_flag = False
@@ -222,9 +236,6 @@ def predict_k_g_list(material_id_list, api_key=API_KEY, query_engine=None):
         matid_list.append(str(entry["material_id"]))
         caveats_list.append(caveats_str)
 
-    if isinstance(mpr, MPRester):
-        mpr.session.close()
-
     # Check that at least one valid material was provided
     num_predictions = len(matid_list)
     if num_predictions > 0:
@@ -268,7 +279,7 @@ def predict_k_g(material_id, api_key=API_KEY, query_engine=None):
     """
     Predict bulk (K) and shear (G) moduli for one material.
     :param material_id: material-ID string
-    :param api_key: The API key used by pymatgen.matproj.rest.MPRester to connect to Materials Project
+    :param api_key: The API key used by pymatgen.matproj.rest.MPRester to connect to Materials Project 
     :param query_engine: (Optional) QueryEngine object used to query materials instead of MPRester
 
     :return: (predicted_k, predicted_g, caveats)
@@ -282,5 +293,16 @@ def predict_k_g(material_id, api_key=API_KEY, query_engine=None):
 
     if material_id_list is None:
         return (None, None, None)  # material_id not found in MP db
+
+    return (k_list[0], g_list[0], caveats_list[0])
+
+
+def predict_k_g_from_entry(entry):
+    """
+    Predict bulk (K) and shear (G) moduli from a single entry in the same
+    format as retrieved from the Materials Project API.
+    """
+
+    (material_id_list, k_list, g_list, caveats_list) = predict_k_g_list_of_entries([entry])
 
     return (k_list[0], g_list[0], caveats_list[0])
