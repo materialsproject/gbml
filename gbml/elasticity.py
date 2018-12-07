@@ -224,8 +224,6 @@ def predict_k_g_list_of_entries(entries):
         # Calculate intermediate weighted averages (WA) for this material
         ewa = np.average(energy_list, weights=weight_list)      # atom-in-a-box energy WA
 
-        print(str(entry["material_id"]))
-
         # Append descriptors for this material to descriptor lists
         lvpa_list.append(math.log10(float(entry["volume"]) / float(entry["nsites"])))
         cepa_list.append(float(entry["energy_per_atom"]) - ewa)
