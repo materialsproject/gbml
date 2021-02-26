@@ -5,6 +5,7 @@ Queries MP db for specified material(s), computes descriptors, and calls gbml.co
 
 from __future__ import print_function
 
+from pymatgen import SETTINGS
 from pymatgen.core.periodic_table import Element
 from pymatgen.core.composition import Composition
 from pymatgen.ext.matproj import MPRester
@@ -23,7 +24,7 @@ __maintainer__ = 'Randy Notestine'
 __email__ = 'RNotestine@ucsd.edu'
 __date__ = 'March 14, 2016'
 
-API_KEY = MPRester().api_key
+API_KEY = SETTINGS.get("PMG_MAPI_KEY")
 CAVEAT_AIAB = 'Unable to estimate cohesive energy for material.'
 CAVEAT_F_BLOCK = 'Predictions are likely less reliable for materials containing F-block elements.'
 CAVEAT_HUBBARD = 'Predictions may be less reliable for materials with non-GGA runs.'
