@@ -36,7 +36,7 @@ core=Extension(
 
 setup(
     name='gbml',
-    version='1.1.1',
+    version='1.1.2',
     description='GBM-Locfit: A GBM framework using Locfit',
     long_description=long_description,
     author='Randy Notestine',
