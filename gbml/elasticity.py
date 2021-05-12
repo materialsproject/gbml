@@ -5,7 +5,7 @@ Queries MP db for specified material(s), computes descriptors, and calls gbml.co
 
 from __future__ import print_function
 
-from pymatgen import SETTINGS
+from pymatgen.core import SETTINGS
 from pymatgen.core.periodic_table import Element
 from pymatgen.core.composition import Composition
 from pymatgen.ext.matproj import MPRester
